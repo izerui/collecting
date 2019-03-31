@@ -2,7 +2,7 @@ package com.github.collecting.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.collecting.jpa.base.BaseEntity;
-import com.github.collecting.json.BigDecimalSerializer;
+import com.github.collecting.utils.BigDecimalSerializer;
 import lombok.Data;
 
 import javax.persistence.Column;
