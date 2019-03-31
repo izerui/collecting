@@ -2,7 +2,6 @@ package com.github.collecting.security;
 
 import com.github.collecting.dao.DeptDao;
 import com.github.collecting.dao.UserDao;
-import com.github.collecting.dao.UserRoleDao;
 import com.github.collecting.dto.UserSession;
 import com.github.collecting.entity.User;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +28,6 @@ public class SecurityService implements UserDetailsService {
 
     @Autowired
     UserDao userDao;
-    @Autowired
-    UserRoleDao userRoleDao;
     @Autowired
     DeptDao deptDao;
 
