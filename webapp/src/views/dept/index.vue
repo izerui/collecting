@@ -1,10 +1,9 @@
 <template>
-  <div style="margin: 10px">
-    <el-button type="primary">新增</el-button>
-    <el-button>新增</el-button>
+  <div style="margin: 10px;padding-left: 10px;">
+    <el-button type="primary" @click="add">新增</el-button>
     <el-table :data="dataList">
       <el-table-column type="index" label="序号"></el-table-column>
-      <el-table-column prop="account" label="部门名称"></el-table-column>
+      <el-table-column prop="deptName" label="部门名称"></el-table-column>
       <el-table-column prop="recordStatus" label="状态"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -13,26 +12,24 @@
         </template>
       </el-table-column>
     </el-table>
-    <user-form :show.sync="form.show" :user-code="form.userCode" :state="form.state"></user-form>
+    <dept-form :show.sync="form.show" :code.sync="form.code" :state.sync="form.state" @refresh="listData"></dept-form>
   </div>
 </template>
 
 <script>
-  import Avatar from 'vue-avatar';
-  import UserForm from "../user/userForm";
-
+  import deptForm from './deptForm';
   export default {
     name: "index",
     components: {
-      UserForm,
-      Avatar
+      deptForm
     },
     data() {
       return {
         dataList: [],
         form: {
           show: false,
-          state: 'info'
+          state: 'info',
+          code:'',
         }
       }
     },
@@ -50,9 +47,14 @@
       async listData() {
         this.dataList = await this.$get("/rbac/list-depts");
       },
+      add() {
+        this.form.state = 'add';
+        this.form.code = '';
+        this.form.show = true;
+      },
       edit(item) {
         this.form.state = 'edit';
-        this.form.userCode = item.userCode;
+        this.form.code = item.deptCode;
         this.form.show = true;
       }
     }

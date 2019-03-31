@@ -33,4 +33,11 @@ public class RbacService {
         return deptDao.findByTenantCode(tenantCode);
     }
 
+    public Dept getDept(String tenantCode, String deptCode) {
+        return deptDao.findByTenantCodeAndDeptCode(tenantCode, deptCode);
+    }
+
+    public void saveDept(Dept dept) {
+        deptDao.save(dept);
+    }
 }

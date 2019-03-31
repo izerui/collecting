@@ -1,4 +1,5 @@
 package com.github.collecting.controller;
+import java.util.Date;
 
 import com.github.collecting.advice.Response;
 import com.github.collecting.entity.Dept;
@@ -6,14 +7,13 @@ import com.github.collecting.entity.User;
 import com.github.collecting.service.RbacService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+import java.util.UUID;
 
 @Api(description = "RBAC管理api")
 @RestController
@@ -29,6 +29,49 @@ public class RbacController {
         List<Dept> depts = rbacService.findDepts(tenantCode);
         return Response.success(depts);
     }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("详情-部门")
+    @GetMapping("/rbac/get-dept")
+    public Response<Dept> getDept(@RequestHeader("tenantCode") String tenantCode,
+                                  @RequestParam("deptCode") String deptCode) {
+        Dept dept = rbacService.getDept(tenantCode, deptCode);
+        return Response.success(dept);
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("添加-部门")
+    @PutMapping("/rbac/add-dept")
+    public Response addDept(@RequestHeader("tenantCode") String tenantCode,
+                                  @RequestHeader("userCode") String userCode,
+                                  @RequestParam("deptName") String deptName) {
+        Dept dept = new Dept();
+        dept.setDeptCode(UUID.randomUUID().toString());
+        dept.setDeptName(deptName);
+        dept.setSort(0);
+        dept.setRecordStatus(1);
+        dept.setTenantCode(tenantCode);
+        dept.setCreator(userCode);
+        dept.setCreateTime(new Date());
+        rbacService.saveDept(dept);
+        return Response.success();
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("编辑-部门")
+    @PutMapping("/rbac/edit-dept")
+    public Response editDept(@RequestHeader("tenantCode") String tenantCode,
+                            @RequestHeader("userCode") String userCode,
+                             @RequestParam("deptCode") String deptCode,
+                            @RequestParam("deptName") String deptName) {
+        if(StringUtils.isNotEmpty(deptCode)){
+            Dept dept = rbacService.getDept(tenantCode, deptCode);
+            dept.setDeptName(deptName);
+            rbacService.saveDept(dept);
+        }
+        return Response.success();
+    }
+
 
     @RolesAllowed("ROLE_ADMIN")
     @ApiOperation("列表-用户")

@@ -88,8 +88,8 @@
     },
     watch: {
       dialogShow(newVal) {
-        if (newVal) {
-          this.$get('/rbac/get-user', { userCode: this.userCode }).then((data) => {
+        if (newVal && this.code) {
+          this.$get('/rbac/get-user', { userCode: this.code }).then((data) => {
             this.formItem = data;
           });
         }
