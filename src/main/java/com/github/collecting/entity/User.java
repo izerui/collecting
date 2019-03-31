@@ -37,8 +37,9 @@ public class User extends BaseEntity {
     //部门编号
     private String deptCode;
 
-    //是否管理员
-    private boolean admin;
+    //拥有的角色 多个逗号分隔
+    @Column(nullable = false)
+    private String roleName;
 
     //头像
     private String avatar;

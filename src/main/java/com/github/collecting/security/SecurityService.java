@@ -1,11 +1,11 @@
-package com.github.collecting.service;
+package com.github.collecting.security;
 
-import com.github.collecting.dao.*;
+import com.github.collecting.dao.DeptDao;
+import com.github.collecting.dao.UserDao;
+import com.github.collecting.dao.UserRoleDao;
 import com.github.collecting.dto.UserSession;
-import com.github.collecting.entity.Resource;
-import com.github.collecting.entity.RoleResource;
 import com.github.collecting.entity.User;
-import com.github.collecting.entity.UserRole;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.github.collecting.jpa.base.Conditions.where;
 
@@ -33,12 +31,6 @@ public class SecurityService implements UserDetailsService {
     UserDao userDao;
     @Autowired
     UserRoleDao userRoleDao;
-    @Autowired
-    RoleDao roleDao;
-    @Autowired
-    RoleResourceDao roleResourceDao;
-    @Autowired
-    ResourceDao resourceDao;
     @Autowired
     DeptDao deptDao;
 
@@ -72,54 +64,18 @@ public class SecurityService implements UserDetailsService {
 
     private UserSession createSession(User user) {
         //加载用户权限
-        Set<String> authorities = this.findUserAuthorities(user);
         UserSession userSession = new UserSession(user.getUserName(),
                 user.getPassword(),
                 user.getRecordStatus() == 1,
                 true,
                 true,
                 true,
-                AuthorityUtils.createAuthorityList(authorities.toArray(new String[authorities.size()]))
+                AuthorityUtils.createAuthorityList(StringUtils.split(user.getRoleName(), ","))
         );
         //权限集合
         userSession.setUserCode(user.getUserCode());
         userSession.setTenantCode(user.getTenantCode());
         return userSession;
-    }
-
-
-    private Set<String> findUserAuthorities(User user) {
-        List<Resource> resources;
-        if (user.isAdmin()) {
-            resources = resourceDao.findAll();
-        } else {
-            List<String> roleCodes = this.findRoleCodesByUserCode(user.getTenantCode(), user.getUserCode());
-            resources = this.findResourcesByRoleCodes(user.getTenantCode(), roleCodes);
-        }
-        return resources.stream().map(Resource::getResourceCode).collect(Collectors.toSet());
-    }
-
-
-    public List<Resource> findResourcesByRoleCodes(String tenantCode, Iterable<String> roleCodes) {
-        List<RoleResource> roleResources = roleResourceDao.findAll(
-                where("tenantCode").is(tenantCode).and("roleCode").in(roleCodes)
-        );
-        List<String> resourceCodes = roleResources.stream().map(RoleResource::getResourceCode).collect(Collectors.toList());
-        return resourceDao.findAll(
-                where("resourceCode").in(resourceCodes)
-        );
-    }
-
-
-    public List<String> findRoleCodesByUserCode(String tenantCode, String userCode) {
-        List<UserRole> userRoles = userRoleDao.findByTenantCodeAndUserCode(tenantCode, userCode);
-        List<String> roleCodes = userRoles.stream().map(UserRole::getRoleCode).collect(Collectors.toList());
-        return roleCodes;
-    }
-
-
-    public List<Resource> findResources() {
-        return resourceDao.findAll();
     }
 
 }

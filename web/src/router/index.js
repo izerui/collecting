@@ -58,18 +58,18 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: '/role-manager',
-        name: '角色管理',
-        component: () => import('@/views/role/index'),
-        meta: { title: '角色管理', icon: 'form' }
-      }
-    ]
-  },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: '/role-manager',
+  //       name: '角色管理',
+  //       component: () => import('@/views/role/index'),
+  //       meta: { title: '角色管理', icon: 'form' }
+  //     }
+  //   ]
+  // },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

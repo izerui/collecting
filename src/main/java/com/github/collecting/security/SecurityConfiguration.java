@@ -2,8 +2,6 @@ package com.github.collecting.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.collecting.dto.UserSession;
-import com.github.collecting.entity.Resource;
-import com.github.collecting.service.SecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
@@ -33,11 +32,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Configuration
+@EnableGlobalMethodSecurity(securedEnabled = true,jsr250Enabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -89,17 +88,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.headers().frameOptions().sameOrigin();
-
-        //初始化全局权限对应表
-        List<Resource> resources = securityService.findResources();
-        for (Resource resource : resources) {
-            if (resource.getPermissionUrl() != null && !"".equals(resource.getPermissionUrl())) {
-                log.info("permission: [url:{} , code:{}]", resource.getPermissionUrl(), resource.getResourceCode());
-                http.authorizeRequests()
-                        .antMatchers(resource.getPermissionUrl())
-                        .hasAuthority(resource.getResourceCode());
-            }
-        }
 
         http.csrf()
                 .disable();
