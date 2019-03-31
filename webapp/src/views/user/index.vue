@@ -10,10 +10,9 @@
           <avatar :username="scope.row.userName" :src="scope.row.avatar" :size="40"></avatar>
         </template>
       </el-table-column>
-      <el-table-column prop="account" label="手机号"></el-table-column>
-      <el-table-column prop="userName" label="用户名"></el-table-column>
-      <el-table-column prop="gender" label="性别"></el-table-column>
-      <el-table-column prop="admin" label="管理员"></el-table-column>
+      <el-table-column prop="userName" label="手机号"></el-table-column>
+      <el-table-column prop="nickName" label="用户名"></el-table-column>
+      <el-table-column prop="roleName" label="角色"></el-table-column>
       <el-table-column prop="recordStatus" label="状态"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -22,7 +21,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <user-form :show.sync="form.show" :user-code="form.userCode" :state="form.state"></user-form>
+    <user-form :show.sync="form.show" :code="form.code" :state="form.state"></user-form>
   </div>
 </template>
 
@@ -41,7 +40,8 @@
         userList: [],
         form: {
           show: false,
-          state: 'info'
+          state: 'info',
+          code: '',
         }
       }
     },
@@ -60,8 +60,8 @@
       },
       edit (item) {
         this.form.state = 'edit'
-        this.form.userCode = item.userCode
-        this.form.show = true
+        this.form.code = item.userCode;
+        this.form.show = true;
       },
       add () {
         this.$message.info("djfdsjfdsf");

@@ -11,14 +11,10 @@
         </el-upload>
       </el-form-item>
       <el-form-item label="用户名">
-        <el-input v-model="formItem.userName"></el-input>
+        <el-input v-model="formItem.nickName"></el-input>
       </el-form-item>
       <el-form-item label="手机号">
-        <el-input v-model="formItem.account"></el-input>
-      </el-form-item>
-      <el-form-item label="管理员">
-        <!--<el-input v-model="formItem.admin"></el-input>-->
-        <el-switch v-model="formItem.admin" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <el-input v-model="formItem.userName"></el-input>
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="formItem.recordStatus" placeholder="请选择">
@@ -49,7 +45,7 @@
         type: String,
         default: 'info'
       },
-      userCode: {
+      code: {
         type: String,
         required: false,
         default: ''
