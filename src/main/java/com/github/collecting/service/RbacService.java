@@ -1,6 +1,7 @@
 package com.github.collecting.service;
 
-import com.github.collecting.dao.*;
+import com.github.collecting.dao.DeptDao;
+import com.github.collecting.dao.UserDao;
 import com.github.collecting.entity.Dept;
 import com.github.collecting.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ public class RbacService {
 
     @Autowired
     UserDao userDao;
-    @Autowired
-    UserRoleDao userRoleDao;
     @Autowired
     DeptDao deptDao;
 
