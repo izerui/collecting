@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="filter-container">
-      <el-button @click="add()">新增</el-button>
+    <div style="margin: 10px;padding-left: 10px;">
+      <el-button @click="add()" type="primary">新增</el-button>
     </div>
     <el-table :data="userList">
       <el-table-column type="index" label="序号"></el-table-column>
@@ -70,9 +70,3 @@
 
   }
 </script>
-
-<style scoped>
-  .filter-container {
-    padding-bottom: 10px;
-  }
-</style>
