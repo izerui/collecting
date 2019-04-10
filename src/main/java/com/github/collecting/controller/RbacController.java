@@ -1,4 +1,5 @@
 package com.github.collecting.controller;
+
 import java.util.Date;
 
 import com.github.collecting.advice.Response;
@@ -15,6 +16,8 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.UUID;
 
+import static com.github.collecting.advice.Response.*;
+
 @Api(description = "RBAC管理api")
 @RestController
 public class RbacController {
@@ -23,11 +26,11 @@ public class RbacController {
     RbacService rbacService;
 
     @RolesAllowed("ROLE_ADMIN")
-    @ApiOperation("列表-部门")
+    @ApiOperation("列表-门店")
     @GetMapping("/rbac/list-depts")
     public Response<List<Dept>> listDepts(@RequestHeader("tenantCode") String tenantCode) {
         List<Dept> depts = rbacService.findDepts(tenantCode);
-        return Response.success(depts);
+        return success(depts);
     }
 
     @RolesAllowed("ROLE_ADMIN")
@@ -36,15 +39,15 @@ public class RbacController {
     public Response<Dept> getDept(@RequestHeader("tenantCode") String tenantCode,
                                   @RequestParam("deptCode") String deptCode) {
         Dept dept = rbacService.getDept(tenantCode, deptCode);
-        return Response.success(dept);
+        return success(dept);
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @ApiOperation("添加-部门")
+    @ApiOperation("添加-门店")
     @PutMapping("/rbac/add-dept")
     public Response addDept(@RequestHeader("tenantCode") String tenantCode,
-                                  @RequestHeader("userCode") String userCode,
-                                  @RequestParam("deptName") String deptName) {
+                            @RequestHeader("userCode") String userCode,
+                            @RequestParam("deptName") String deptName) {
         Dept dept = new Dept();
         dept.setDeptCode(UUID.randomUUID().toString());
         dept.setDeptName(deptName);
@@ -54,22 +57,30 @@ public class RbacController {
         dept.setCreator(userCode);
         dept.setCreateTime(new Date());
         rbacService.saveDept(dept);
-        return Response.success();
+        return success();
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @ApiOperation("编辑-部门")
+    @ApiOperation("编辑-门店")
     @PutMapping("/rbac/edit-dept")
     public Response editDept(@RequestHeader("tenantCode") String tenantCode,
-                            @RequestHeader("userCode") String userCode,
+                             @RequestHeader("userCode") String userCode,
                              @RequestParam("deptCode") String deptCode,
-                            @RequestParam("deptName") String deptName) {
-        if(StringUtils.isNotEmpty(deptCode)){
-            Dept dept = rbacService.getDept(tenantCode, deptCode);
-            dept.setDeptName(deptName);
-            rbacService.saveDept(dept);
-        }
-        return Response.success();
+                             @RequestParam("deptName") String deptName) {
+        Dept dept = rbacService.getDept(tenantCode, deptCode);
+        dept.setDeptName(deptName);
+        rbacService.saveDept(dept);
+        return success();
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("删除-门店")
+    @DeleteMapping("/rbac/delete-dept")
+    public Response editDept(@RequestHeader("tenantCode") String tenantCode,
+                             @RequestHeader("userCode") String userCode,
+                             @RequestParam("deptCode") String deptCode) {
+        rbacService.deleteDept(tenantCode, deptCode);
+        return success();
     }
 
 
@@ -78,7 +89,7 @@ public class RbacController {
     @GetMapping("/rbac/list-users")
     public Response<List<User>> listUsers(@RequestHeader("tenantCode") String tenantCode) {
         List<User> users = rbacService.findUsers(tenantCode);
-        return Response.success(users);
+        return success(users);
     }
 
     @RolesAllowed("ROLE_ADMIN")
@@ -86,7 +97,7 @@ public class RbacController {
     @GetMapping("/rbac/get-user")
     public Response<User> getUser(@RequestParam("userCode") String userCode) {
         User user = rbacService.getUserByUserCode(userCode);
-        return Response.success(user);
+        return success(user);
     }
 
 }

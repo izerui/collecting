@@ -30,7 +30,7 @@ public class RbacService {
     }
 
     public List<Dept> findDepts(String tenantCode) {
-        return deptDao.findByTenantCode(tenantCode);
+        return deptDao.findByTenantCodeAndRecordStatus(tenantCode, 1);
     }
 
     public Dept getDept(String tenantCode, String deptCode) {
@@ -38,6 +38,12 @@ public class RbacService {
     }
 
     public void saveDept(Dept dept) {
+        deptDao.save(dept);
+    }
+
+    public void deleteDept(String tenantCode, String deptCode) {
+        Dept dept = deptDao.findByTenantCodeAndDeptCode(tenantCode, deptCode);
+        dept.setRecordStatus(-1);
         deptDao.save(dept);
     }
 }

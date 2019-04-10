@@ -40,9 +40,9 @@ export const constantRouterMap = [
     children: [
       {
         path: '/dept-manager',
-        name: '部门管理',
+        name: '门店管理',
         component: () => import('@/views/dept/index'),
-        meta: { title: '部门管理', icon: 'form' }
+        meta: { title: '门店管理', icon: 'form' }
       }
     ]
   },

@@ -22,3 +22,4 @@ bin-debug
 /.gradle/
 deploy.sh
 node_modules
+rebel.xml
