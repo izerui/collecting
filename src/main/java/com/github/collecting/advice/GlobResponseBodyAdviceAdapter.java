@@ -92,8 +92,6 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             //自定义code异常
             if (throwable instanceof BusinessException) {
                 logger.error(throwable.getMessage());
-                //自定义异常status为200
-                resp.put("status", 200);
                 resp.put("errCode", ((BusinessException) throwable).getErrCode());
             } else {
                 logger.error(throwable.getMessage(), throwable);
@@ -103,42 +101,23 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
             String errMsg = throwable.getMessage();
             if (throwable instanceof HttpMessageNotWritableException) {
-                resp.put("status", 200);
                 errMsg = ((HttpMessageNotWritableException) throwable).getRootCause().getMessage();
             }
             if (throwable instanceof HttpMessageNotReadableException) {
-                resp.put("status", 200);
                 errMsg = "请求中包含错误格式的数据,请检查";
             }
             if (throwable instanceof NullPointerException) {
-                resp.put("status", 200);
+                response.setStatus(200);
                 errMsg = "系统发生了未知的错误";
             }
             if (throwable.getClass().getName().equals("com.netflix.zuul.exception.ZuulException")) {
-                resp.put("status", 200);
                 errMsg = "请求服务暂时不可用,请稍后重试";
             }
-
+            response.setStatus(200);
             resp.put("errMsg", errMsg);
             resp.put("data", body);
             resp.put("exceptionType", throwable.getClass().getName());
             resp.put("exception", showException ? throwable : null);
-
-
-//            //feign 请求
-//            String clientType = request.getHeader(CLIENT_TYPE);
-//            if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-//                resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
-//            } else {
-//                response.setStatus(HttpServletResponse.SC_OK);
-//            }
-//
-//            //bboss 请求
-//            if (applicationName != null && applicationName.equals("bboss-web")) {
-//                response.setStatus(500);
-//                resp.put("message", throwable.getMessage());
-//            }
-
 
             return resp;
         }

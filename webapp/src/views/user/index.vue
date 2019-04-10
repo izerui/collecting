@@ -5,23 +5,17 @@
     </div>
     <el-table :data="userList">
       <el-table-column type="index" label="序号"></el-table-column>
-      <el-table-column prop="avatar" label="头像">
-        <template slot-scope="scope">
-          <avatar :username="scope.row.userName" :src="scope.row.avatar" :size="40"></avatar>
-        </template>
-      </el-table-column>
       <el-table-column prop="userName" label="手机号"></el-table-column>
-      <el-table-column prop="nickName" label="用户名"></el-table-column>
-      <el-table-column prop="roleName" label="角色"></el-table-column>
+      <el-table-column prop="nickName" label="昵称"></el-table-column>
       <el-table-column prop="recordStatus" label="状态"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="edit(scope.row)">编辑</el-button>
-          <el-button type="danger" size="mini">删除</el-button>
+          <el-button type="danger" size="mini" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <user-form :show.sync="form.show" :code="form.code" :state="form.state"></user-form>
+    <user-form :show.sync="form.show" :code="form.code" :state="form.state" @refresh="listUsers"></user-form>
   </div>
 </template>
 
@@ -64,7 +58,22 @@
         this.form.show = true;
       },
       add () {
-        this.$message.info("djfdsjfdsf");
+        this.form.state = 'add'
+        this.form.code = '';
+        this.form.show = true;
+      },
+      async del(item) {
+        this.$confirm('删除用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$delete('/rbac/delete-user',{userCode:item.userCode}).then(() => {
+            this.$message.success('删除成功');
+            this.listUsers();
+          });
+        }).catch(() => {
+        });
       }
     }
 

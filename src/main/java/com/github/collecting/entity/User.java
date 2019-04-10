@@ -41,7 +41,4 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String roleName;
 
-    //头像
-    private String avatar;
-
 }

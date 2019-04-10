@@ -57,7 +57,7 @@
         this.form.code = item.deptCode;
         this.form.show = true;
       },
-      del(item) {
+      async del(item) {
         this.$confirm('删除门店, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

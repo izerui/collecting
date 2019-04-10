@@ -1,30 +1,29 @@
 <template>
   <el-dialog :visible.sync="dialogShow" :title="dialogTitle">
     <el-form :model="formItem" ref="form" label-width="80px">
-      <el-form-item label="头像">
-        <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false">
-          <avatar v-if="formItem.avatar" :username="formItem.userName" :src="formItem.avatar" :size="40"></avatar>
-          <!--<img v-if="selItem.avatar" :src="selItem.avatar" class="avatar">-->
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-      </el-form-item>
-      <el-form-item label="用户名">
+      <el-form-item label="昵称" required>
         <el-input v-model="formItem.nickName"></el-input>
       </el-form-item>
-      <el-form-item label="手机号">
+      <el-form-item label="手机号" required>
         <el-input v-model="formItem.userName"></el-input>
       </el-form-item>
-      <el-form-item label="状态">
+      <el-form-item label="密码" required v-if="state === 'add'">
+        <el-input v-model="formItem.password"></el-input>
+      </el-form-item>
+      <el-form-item label="状态" v-if="state === 'edit'">
         <el-select v-model="formItem.recordStatus" placeholder="请选择">
           <el-option label="正常" :value="1"></el-option>
           <el-option label="禁用" :value="0"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="门店" required>
+        <el-select v-model="formItem.deptCode" clearable placeholder="请选择">
+          <el-option :label="dept.deptName" :value="dept.deptCode" v-for="dept in deptList"></el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogShow = false">取 消</el-button>
+      <el-button @click="close">取 消</el-button>
       <el-button type="primary" @click="save()">确 定</el-button>
     </div>
   </el-dialog>
@@ -35,7 +34,7 @@
 
   export default {
     name: "userForm",
-    components: { Avatar },
+    components: {Avatar},
     props: {
       show: {
         type: Boolean,
@@ -53,13 +52,8 @@
     },
     data() {
       return {
-        formItem: {
-          avatar: '',
-          userName: '',
-          account: '',
-          admin: 0,
-          recordStatus: 0
-        }
+        formItem: {},
+        deptList: []
       }
     },
     computed: {
@@ -83,16 +77,24 @@
       }
     },
     watch: {
-      dialogShow(newVal) {
+      async dialogShow(newVal) {
+        this.formItem = {};
+        this.deptList = await this.$get('/rbac/list-depts');
         if (newVal && this.code) {
-          this.$get('/rbac/get-user', { userCode: this.code }).then((data) => {
-            this.formItem = data;
-          });
+          this.formItem = await this.$get('/rbac/get-user', {userCode: this.code})
         }
       }
     },
     methods: {
-      save() {
+      close() {
+        this.dialogShow = false
+      },
+      async save() {
+        const url = this.state === 'add' ? '/rbac/add-user' : '/rbac/edit-user';
+        await this.$put(url, this.formItem, true);
+        this.$message.success('保存成功');
+        this.close();
+        this.$emit('refresh');
       }
     }
   }

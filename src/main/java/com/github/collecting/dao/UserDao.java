@@ -9,4 +9,5 @@ import java.util.List;
 public interface UserDao extends PlatformJpaRepository<User, Long> {
     List<User> findByTenantCode(String tenantCode);
     User findByUserCode(String userCode);
+    boolean existsByTenantCodeAndUserName(String tenantCode, String userName);
 }

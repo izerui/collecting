@@ -1,22 +1,21 @@
 package com.github.collecting.controller;
 
-import java.util.Date;
-
 import com.github.collecting.advice.Response;
+import com.github.collecting.dto.UserDto;
 import com.github.collecting.entity.Dept;
 import com.github.collecting.entity.User;
 import com.github.collecting.service.RbacService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.github.collecting.advice.Response.*;
+import static com.github.collecting.advice.Response.success;
 
 @Api(description = "RBAC管理api")
 @RestController
@@ -34,7 +33,7 @@ public class RbacController {
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @ApiOperation("详情-部门")
+    @ApiOperation("详情-门店")
     @GetMapping("/rbac/get-dept")
     public Response<Dept> getDept(@RequestHeader("tenantCode") String tenantCode,
                                   @RequestParam("deptCode") String deptCode) {
@@ -83,6 +82,34 @@ public class RbacController {
         return success();
     }
 
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("新增-用户")
+    @PutMapping("/rbac/add-user")
+    public Response addUser(@RequestHeader("tenantCode") String tenantCode,
+                             @RequestBody UserDto userDto) {
+        userDto.validAdd();
+        rbacService.addUser(tenantCode, userDto);
+        return success();
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("编辑-用户")
+    @PutMapping("/rbac/edit-user")
+    public Response editUser(@RequestHeader("tenantCode") String tenantCode,
+                             @RequestBody UserDto userDto) {
+        userDto.validEdit();
+        rbacService.editUser(userDto);
+        return success();
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @ApiOperation("删除-用户")
+    @DeleteMapping("/rbac/delete-user")
+    public Response deleteUser(@RequestHeader("tenantCode") String tenantCode,
+                             @RequestParam String userCode) {
+        rbacService.deleteUser(userCode);
+        return success();
+    }
 
     @RolesAllowed("ROLE_ADMIN")
     @ApiOperation("列表-用户")
